@@ -20,4 +20,6 @@ public class User extends ParentEntity {
     @Column(nullable = false)
     private String password;
     private Boolean active;
+    @Column(nullable=false)
+    private String role;
 }
