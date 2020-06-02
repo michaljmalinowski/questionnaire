@@ -5,21 +5,21 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 
-@Entity
-@Table(name = "users")
-@Getter @Setter @ToString(exclude = "password", callSuper = true)
+/*@Entity
+@Table(name = "users")*/
+@MappedSuperclass
+@Getter
+@Setter
+@ToString(exclude = "password", callSuper = true)
 public class User extends ParentEntity {
-
-    @Column(nullable = false, unique = true)
-    private String username;
     @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private Boolean active;
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String role;
 }
