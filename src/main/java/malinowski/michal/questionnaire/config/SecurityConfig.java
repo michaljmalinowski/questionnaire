@@ -24,13 +24,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .inMemoryAuthentication()
-                .withUser("user").password("{noop}pass").roles("USER")
+                .withUser("respondent").password("{noop}pass").roles("RESPONDENT")
+                .and()
+                .withUser("admin").password("{noop}pass").roles("ADMIN")
+                .and()
+                .withUser("editor").password("{noop}pass").roles("EDITOR")
                 .and()
                 .and()
                 .jdbcAuthentication()
                 .dataSource(dataSource)
-                .usersByUsernameQuery("SELECT username, password, active FROM users WHERE username = ?")
-                .authoritiesByUsernameQuery("SELECT username, 'ROLE_USER' FROM users WHERE username = ?");
+                .usersByUsernameQuery("SELECT username, password, active FROM (" +
+                        "SELECT username, password, active FROM respondents" +
+                        " UNION " +
+                        "SELECT email As username, password, active FROM workers) As login WHERE username = ?")
+                .authoritiesByUsernameQuery("SELECT username, role FROM (" +
+                        "SELECT username, 'ROLE_RESPONDENT' As role FROM respondents" +
+                        " UNION " +
+                        "SELECT email As username, role FROM workers) As login_roles WHERE username = ?");
     }
 
     @Override
@@ -47,6 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .formLogin();
+        http.logout().logoutSuccessUrl("/");
     }
 
     @Bean

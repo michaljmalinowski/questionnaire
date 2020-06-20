@@ -37,7 +37,7 @@ public class RegistrationController {
         }
         registrationService.register(registrationData);
         log.debug("Poprawnie zarejestrowano dane: {}", registrationData);
-        return "registration/success";
+        return "redirect:/login";
     }
 
 }
